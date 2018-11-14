@@ -1,4 +1,5 @@
 'use strict';
+var calculator = require('./calulator');
 
 
 /**
@@ -8,23 +9,34 @@
  * lng BigDecimal longitude of selected location
  * returns NearbyResponse
  **/
-exports.nearby = function(lat,lng) {
-  return new Promise(function(resolve, reject) {
-    var examples = {};
-    examples['application/json'] = {
-  "nearby_sites" : [ {
-    "site_name" : "site_name",
-    "agent_name" : "agent_name"
-  }, {
-    "site_name" : "site_name",
-    "agent_name" : "agent_name"
-  } ]
-};
-    if (Object.keys(examples).length > 0) {
-      resolve(examples[Object.keys(examples)[0]]);
-    } else {
-      resolve();
+exports.nearby = function (lat, lng) {
+  return new Promise(function (resolve, reject) {
+
+    try {
+
+      calculator.calculateDistance(lat, lng).then((value) => {
+        console.log("RESOLVED: ", value);
+        let res = value;
+        var result = {};
+        result['application/json'] = {
+          nearby_sites: res
+        };
+
+        if (Object.keys(result).length > 0) {
+          resolve(result[Object.keys(result)[0]]);
+        } else {
+          resolve();
+        }
+
+      });
+
+    } catch (error) {
+      console.log(error);
     }
+
+
+
+
   });
 }
 
