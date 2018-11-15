@@ -1,13 +1,15 @@
 'use strict';
 
 var fs = require('fs'),
-    path = require('path'),
-    http = require('http');
-
+  path = require('path'),
+  http = require('http');
 var app = require('connect')();
 var swaggerTools = require('swagger-tools');
 var jsyaml = require('js-yaml');
 var serverPort = 10010;
+var cors = require('cors')
+
+app.use(cors());
 
 // swaggerRouter configuration
 var options = {
@@ -17,7 +19,7 @@ var options = {
 };
 
 // The Swagger document (require it, build it programmatically, fetch it from a URL, ...)
-var spec = fs.readFileSync(path.join(__dirname,'api/swagger.yaml'), 'utf8');
+var spec = fs.readFileSync(path.join(__dirname, 'api/swagger.yaml'), 'utf8');
 var swaggerDoc = jsyaml.safeLoad(spec);
 
 // Initialize the Swagger middleware
@@ -34,6 +36,7 @@ swaggerTools.initializeMiddleware(swaggerDoc, function (middleware) {
 
   // Serve the Swagger documents and Swagger UI
   app.use(middleware.swaggerUi());
+
 
   // Start the server
   http.createServer(app).listen(serverPort, function () {
